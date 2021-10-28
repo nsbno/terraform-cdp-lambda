@@ -107,18 +107,8 @@ resource "aws_lambda_permission" "allow_bucket" {
   source_arn    = var.allow_bucket
 }
 
-resource "aws_lambda_permission" "log_error_cloudwatch_invoke_permission" {
-  for_each = var.log_alarm_filters
-  statement_id = "log_error_cloudwatch_invoke_permission_${local.lambda_name}"
-  action = "lambda:InvokeFunction"
-  function_name = each.value
-  principal = "logs.amazonaws.com"
-  source_arn = "${aws_cloudwatch_log_group.log_group.arn}:*"
-}
-
 resource "aws_cloudwatch_log_subscription_filter" "log_error_filter" {
   for_each = "stage" == var.env ? {} : var.log_alarm_filters
-  depends_on = [aws_lambda_permission.log_error_cloudwatch_invoke_permission]
   destination_arn = each.value
   filter_pattern = each.key
   log_group_name = aws_cloudwatch_log_group.log_group.name
