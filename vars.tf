@@ -1,8 +1,5 @@
-data "aws_lambda_function" "slack-forwarder-lambda-function" {
-  function_name = "cdp-statistics-${var.env}-slack-forwarder"
-}
-
 variable "env" {}
+variable "lambda_code_dir" {}
 variable "name_prefix" {}
 variable "lambda_name" {}
 variable "runtime" {

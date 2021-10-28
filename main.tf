@@ -1,7 +1,6 @@
 locals {
-  root_lambda_code_dir = "${path.module}/../../../lambda_code"
-  lambda_code_dir_name = "${var.name_prefix}-${var.lambda_name}"
-  lambda_code_dir = "${local.root_lambda_code_dir}/${local.lambda_code_dir_name}"
+  lambda_dir_name = "${var.name_prefix}-${var.lambda_name}"
+  lambda_dir = "${var.lambda_code_dir}/${local.lambda_dir_name}"
   lambda_name = "${var.name_prefix}-${var.env}-${var.lambda_name}"
 }
 
@@ -38,12 +37,12 @@ resource "aws_cloudwatch_log_group" "log_group" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name = "${local.lambda_code_dir_name}-role"
+  name = "${local.lambda_dir_name}-role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
 }
 
 resource "aws_iam_policy" "no_log_group_lambda_policy" {
-  name = "${local.lambda_code_dir_name}-no-log-group-policy"
+  name = "${local.lambda_dir_name}-no-log-group-policy"
   policy = data.aws_iam_policy_document.lambda_exec_role_policy_sans_log_group.json
 }
 
@@ -53,7 +52,7 @@ resource "aws_iam_role_policy_attachment" "no_log_group_lambda_policy_attachment
 }
 
 resource "aws_iam_policy" "lambda_policy" {
-  name = "${local.lambda_code_dir_name}-policy"
+  name = "${local.lambda_dir_name}-policy"
   policy = var.resource_policy
 }
 
@@ -63,14 +62,14 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
 }
 
 data "archive_file" "lambda_deploy_package" {
-  output_path = "${local.lambda_code_dir}.zip"
-  source_dir = local.lambda_code_dir
+  output_path = "${local.lambda_dir}.zip"
+  source_dir = local.lambda_dir
   type        = "zip"
 }
 
 resource "aws_lambda_layer_version" "lambda_layers" {
-  for_each = fileset(local.root_lambda_code_dir, "${local.lambda_code_dir_name}-dependencies-*.zip")
-  filename = "${local.root_lambda_code_dir}/${each.value}"
+  for_each = fileset(var.lambda_code_dir, "${local.lambda_dir_name}-dependencies-*.zip")
+  filename = "${var.lambda_code_dir}/${each.value}"
   layer_name = trimsuffix(each.value, ".zip")
   compatible_runtimes = [var.python_version]
   lifecycle {
@@ -106,10 +105,6 @@ resource "aws_lambda_permission" "allow_bucket" {
   function_name = aws_lambda_function.lambda.function_name
   principal     = "s3.amazonaws.com"
   source_arn    = var.allow_bucket
-}
-
-data "aws_arn" "deconstructed_lambda_arn" {
-  arn = aws_lambda_function.lambda.arn
 }
 
 resource "aws_lambda_permission" "log_error_cloudwatch_invoke_permission" {
