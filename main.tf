@@ -1,7 +1,7 @@
 locals {
-  lambda_dir_name = "${var.name_prefix}-${var.lambda_name}"
+  lambda_dir_name = "${var.name_prefix}-${var.lambda_source_dir_name}"
   lambda_dir = "${var.lambda_code_dir}/${local.lambda_dir_name}"
-  lambda_name = "${var.name_prefix}-${var.env}-${var.lambda_name}"
+  lambda_name_full = "${var.name_prefix}-${var.env}-${var.lambda_name}"
 }
 
 data aws_iam_policy_document "lambda_assume_role_policy" {
@@ -37,12 +37,12 @@ resource "aws_cloudwatch_log_group" "log_group" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name = "${local.lambda_dir_name}-role"
+  name = "${local.lambda_name_full}-role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
 }
 
 resource "aws_iam_policy" "no_log_group_lambda_policy" {
-  name = "${local.lambda_dir_name}-no-log-group-policy"
+  name = "${local.lambda_name_full}-no-log-group-policy"
   policy = data.aws_iam_policy_document.lambda_exec_role_policy_sans_log_group.json
 }
 
@@ -52,7 +52,7 @@ resource "aws_iam_role_policy_attachment" "no_log_group_lambda_policy_attachment
 }
 
 resource "aws_iam_policy" "lambda_policy" {
-  name = "${local.lambda_dir_name}-policy"
+  name = "${local.lambda_name_full}-policy"
   policy = var.resource_policy
 }
 
@@ -80,7 +80,7 @@ resource "aws_lambda_layer_version" "lambda_layers" {
 resource "aws_lambda_function" "lambda" {
   depends_on = [aws_lambda_layer_version.lambda_layers]
   filename      = data.archive_file.lambda_deploy_package.output_path
-  function_name = local.lambda_name
+  function_name = local.lambda_name_full
   role          = aws_iam_role.lambda_role.arn
   handler       = "handler.handler"
   timeout = var.timeout
@@ -100,7 +100,7 @@ resource "aws_lambda_function" "lambda" {
 
 resource "aws_lambda_permission" "allow_bucket" {
   count = var.allow_bucket != "" ? 1 : 0
-  statement_id  = "AllowExecutionFromS3${var.lambda_name}"
+  statement_id  = "AllowExecutionFromS3${local.lambda_name_full}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda.function_name
   principal     = "s3.amazonaws.com"
@@ -112,5 +112,5 @@ resource "aws_cloudwatch_log_subscription_filter" "log_error_filter" {
   destination_arn = each.value
   filter_pattern = each.key
   log_group_name = aws_cloudwatch_log_group.log_group.name
-  name = "log_error_filter_${local.lambda_name}"
+  name = "log_error_filter_${local.lambda_name_full}"
 }
