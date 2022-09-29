@@ -4,7 +4,6 @@ variable "name_prefix" {}
 variable "lambda_name" {}
 variable "lambda_source_dir_name" {
   type = string
-  default = var.lambda_name
   description = "The name of the folder within lambda_code_dir that contains the source code for the lambda"
 }
 variable "runtime" {
