@@ -1,6 +1,6 @@
 locals {
   lambda_dir = "${var.lambda_code_dir}/${var.lambda_source_dir_name}"
-  lambda_name_full = "${var.name_prefix}-${var.env}-${var.lambda_name}"
+  lambda_name_full = "${var.name_prefix}-${var.lambda_name}"
 }
 
 data aws_iam_policy_document "lambda_assume_role_policy" {
