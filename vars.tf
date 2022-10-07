@@ -1,4 +1,7 @@
-variable "env" {}
+variable "env" {
+  type = string
+  description = "Environment (Typically one of 'test', 'stage' or 'prod')"
+}
 variable "lambda_code_dir" {}
 variable "name_prefix" {}
 variable "lambda_name" {}
