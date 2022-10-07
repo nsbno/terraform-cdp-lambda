@@ -1,6 +1,5 @@
 locals {
-  lambda_dir_name = "${var.name_prefix}-${var.lambda_source_dir_name}"
-  lambda_dir = "${var.lambda_code_dir}/${local.lambda_dir_name}"
+  lambda_dir = "${var.lambda_code_dir}/${var.lambda_source_dir_name}"
   lambda_name_full = "${var.name_prefix}-${var.lambda_name}"
 }
 
@@ -68,7 +67,7 @@ data "archive_file" "lambda_deploy_package" {
 }
 
 resource "aws_lambda_layer_version" "lambda_layers" {
-  for_each = fileset(var.lambda_code_dir, "${local.lambda_dir_name}-dependencies-*.zip")
+  for_each = fileset(var.lambda_code_dir, "${var.lambda_source_dir_name}-dependencies-*.zip")
   filename = "${var.lambda_code_dir}/${each.value}"
   layer_name = trimsuffix(each.value, ".zip")
   compatible_runtimes = [var.python_version]
