@@ -73,7 +73,7 @@ resource "aws_lambda_function" "lambda" {
   handler                        = "handler.handler"
   timeout                        = var.timeout
   source_code_hash               = data.archive_file.lambda_deploy_package.output_base64sha256
-  layers                         = [for layer in local.lambda_layers : layer.arn]
+  layers                         = [for layer in var.lambda_layers : layer.arn]
   runtime                        = var.runtime
   memory_size                    = var.memory
   reserved_concurrent_executions = var.reserved_concurrent_executions
