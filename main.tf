@@ -1,7 +1,6 @@
 locals {
   lambda_dir       = "${var.lambda_code_dir}/${var.lambda_source_dir_name}"
   lambda_name_full = "${var.name_prefix}-${var.lambda_name}"
-  lambda_layers    = concat([{ arn : "arn:aws:lambda:eu-west-1:336392948345:layer:AWSSDKPandas-Python39:1" }], var.lambda_layers)
 }
 
 data "aws_iam_policy_document" "lambda_assume_role_policy" {
