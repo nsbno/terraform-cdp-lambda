@@ -65,7 +65,8 @@ data "local_file" "lambda_handler" {
 }
 
 data "local_file" "upsert_query" {
-  filename =  "${var.query_dir}/${var.upsert_query}"
+  count    = var.upsert_query != "" ? 1 : 0
+  filename = "${var.query_dir}/${var.upsert_query}"
 }
 
 data "archive_file" "lambda_deploy_package" {
@@ -73,12 +74,13 @@ data "archive_file" "lambda_deploy_package" {
   type        = "zip"
 
   source {
-    content = data.local_file.lambda_handler.content
+    content  = data.local_file.lambda_handler.content
     filename = "handler.py"
   }
 
   source {
-    content = data.local_file.upsert_query.content
+    count    = var.upsert_query != "" ? 1 : 0
+    content  = data.local_file.upsert_query.content
     filename = "upsert.sql"
   }
 }
