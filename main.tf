@@ -69,7 +69,7 @@ data "local_file" "upsert_query" {
 }
 
 data "archive_file" "lambda_deploy_package" {
-  output_path = "${local.lambda_dir}.zip"
+  output_path = "${var.lambda_code_dir}/out/${var.lambda_name}.zip"
   type        = "zip"
 
   source {
