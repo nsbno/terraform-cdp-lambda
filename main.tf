@@ -60,10 +60,19 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
   role       = aws_iam_role.lambda_role.name
 }
 
+data "local_file" "upsert_query" {
+  filename =  "${var.query_dir}/${var.upsert_query}"
+}
+
 data "archive_file" "lambda_deploy_package" {
   output_path = "${local.lambda_dir}.zip"
   source_dir  = local.lambda_dir
   type        = "zip"
+
+  source {
+    content = data.local_file.upsert_query
+    filename = "upsert.sql"
+  }
 }
 
 resource "aws_lambda_function" "lambda" {
