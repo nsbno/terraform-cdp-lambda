@@ -80,7 +80,7 @@ data "archive_file" "lambda_deploy_package" {
 
   source {
     count    = var.upsert_query != "" ? 1 : 0
-    content  = data.local_file.upsert_query.content
+    content  = data.local_file.upsert_query[0].content
     filename = "upsert.sql"
   }
 }
