@@ -70,7 +70,7 @@ data "archive_file" "lambda_deploy_package" {
   type        = "zip"
 
   source {
-    content = data.local_file.upsert_query
+    content = data.local_file.upsert_query.content
     filename = "upsert.sql"
   }
 }
