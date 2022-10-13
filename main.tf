@@ -60,14 +60,22 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
   role       = aws_iam_role.lambda_role.name
 }
 
+data "local_file" "lambda_handler" {
+  filename = "${local.lambda_dir}/handler.py"
+}
+
 data "local_file" "upsert_query" {
   filename =  "${var.query_dir}/${var.upsert_query}"
 }
 
 data "archive_file" "lambda_deploy_package" {
   output_path = "${local.lambda_dir}.zip"
-  source_dir  = local.lambda_dir
   type        = "zip"
+
+  source {
+    content = data.local_file.lambda_handler.content
+    filename = "handler.py"
+  }
 
   source {
     content = data.local_file.upsert_query.content

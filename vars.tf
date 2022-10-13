@@ -12,7 +12,7 @@ variable "lambda_source_dir_name" {
 variable "query_dir" {
   type = string
   description = "The local path of the directory with SQL queries"
-  default = "queries"
+  default = "../../queries"
 }
 variable "upsert_query" {
   type = string
