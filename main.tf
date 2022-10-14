@@ -60,10 +60,28 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
   role       = aws_iam_role.lambda_role.name
 }
 
+data "local_file" "lambda_handler" {
+  filename = "${local.lambda_dir}/handler.py"
+}
+
+data "local_file" "upsert_query" {
+  count    = var.upsert_query != "" ? 1 : 0
+  filename = "${var.query_dir}/${var.upsert_query}"
+}
+
 data "archive_file" "lambda_deploy_package" {
-  output_path = "${local.lambda_dir}.zip"
-  source_dir  = local.lambda_dir
+  output_path = "${var.lambda_code_dir}/out/${var.lambda_name}.zip"
   type        = "zip"
+
+  source {
+    content  = data.local_file.lambda_handler.content
+    filename = "handler.py"
+  }
+
+  source {
+    content  = var.upsert_query != "" ? data.local_file.upsert_query[0].content : "" 
+    filename = "upsert.sql"
+  }
 }
 
 resource "aws_lambda_function" "lambda" {

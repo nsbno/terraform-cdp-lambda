@@ -9,6 +9,16 @@ variable "lambda_source_dir_name" {
   type        = string
   description = "The name of the folder within lambda_code_dir that contains the source code for the lambda"
 }
+variable "query_dir" {
+  type = string
+  description = "The local path of the directory with SQL queries"
+  default = "../../queries"
+}
+variable "upsert_query" {
+  type = string
+  description = "The path/filename (starting from query_dir) of the upsert sql"
+  default = ""
+}
 variable "runtime" {
   default = "python3.8"
 }
