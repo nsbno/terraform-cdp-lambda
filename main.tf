@@ -105,7 +105,7 @@ resource "aws_lambda_function" "lambda" {
 }
 
 resource "aws_lambda_permission" "allow_bucket" {
-  count         = var.allow_bucket != "" ? 1 : 0
+  count         = var.invoke_from_s3 ? 1 : 0
   statement_id  = "AllowExecutionFromS3${local.lambda_name_full}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda.function_name
