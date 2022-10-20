@@ -10,14 +10,14 @@ variable "lambda_source_dir_name" {
   description = "The name of the folder within lambda_code_dir that contains the source code for the lambda"
 }
 variable "query_dir" {
-  type = string
+  type        = string
   description = "The local path of the directory with SQL queries"
-  default = "../../queries"
+  default     = "../../queries"
 }
 variable "upsert_query" {
-  type = string
+  type        = string
   description = "The path/filename (starting from query_dir) of the upsert sql"
-  default = ""
+  default     = ""
 }
 variable "runtime" {
   default = "python3.8"
@@ -51,6 +51,11 @@ variable "log_alarm_filters" {
 }
 variable "reserved_concurrent_executions" {
   default = -1
+}
+variable "invoke_from_s3" {
+  type        = bool
+  default     = false
+  description = "Whether the lambda will be invoked from an S3 bucket notification. Use with allow_bucket."
 }
 variable "allow_bucket" {
   default = ""
