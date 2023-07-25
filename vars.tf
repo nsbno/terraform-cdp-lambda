@@ -71,3 +71,7 @@ variable "lambda_layers" {
   }))
   default = []
 }
+variable "tags" {
+    type = map
+    description = "Tags applied to all resources in the deployment"
+}
