@@ -33,16 +33,19 @@ data "aws_iam_policy_document" "lambda_exec_role_policy_sans_log_group" {
 resource "aws_cloudwatch_log_group" "log_group" {
   name              = "/aws/lambda/${aws_lambda_function.lambda.function_name}"
   retention_in_days = 365
+  tags              = var.tags
 }
 
 resource "aws_iam_role" "lambda_role" {
   name               = "${local.lambda_name_full}-role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
+  tags               = var.tags
 }
 
 resource "aws_iam_policy" "no_log_group_lambda_policy" {
   name   = "${local.lambda_name_full}-no-log-group-policy"
   policy = data.aws_iam_policy_document.lambda_exec_role_policy_sans_log_group.json
+  tags   = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "no_log_group_lambda_policy_attachment" {
@@ -53,6 +56,7 @@ resource "aws_iam_role_policy_attachment" "no_log_group_lambda_policy_attachment
 resource "aws_iam_policy" "lambda_policy" {
   name   = "${local.lambda_name_full}-policy"
   policy = var.resource_policy
+  tags   = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
@@ -79,7 +83,7 @@ data "archive_file" "lambda_deploy_package" {
   }
 
   source {
-    content  = var.upsert_query != "" ? data.local_file.upsert_query[0].content : "" 
+    content  = var.upsert_query != "" ? data.local_file.upsert_query[0].content : ""
     filename = "upsert.sql"
   }
 }
@@ -102,6 +106,7 @@ resource "aws_lambda_function" "lambda" {
     security_group_ids = var.security_group_ids
     subnet_ids         = var.subnet_ids
   }
+  tags = var.tags
 }
 
 resource "aws_lambda_permission" "allow_bucket" {
