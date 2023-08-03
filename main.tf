@@ -18,34 +18,35 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
   }
 }
 
-data "aws_iam_policy_document" "lambda_exec_role_policy_sans_log_group" {
+data "aws_iam_policy_document" "logging_document" {
   statement {
+    effect  = "Allow"
     actions = [
       "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "logs:PutLogEvents",
     ]
-    resources = [
-      "arn:aws:logs:*:*:*"
-    ]
+    resources = ["${aws_cloudwatch_log_group.log_group.arn}:*"]
   }
 }
 
 resource "aws_cloudwatch_log_group" "log_group" {
-  name              = "/aws/lambda/${aws_lambda_function.lambda.function_name}"
-  retention_in_days = 365
+  name              = "/aws/lambda/${var.name_prefix}-${var.application_name}-${var.name}"
+  retention_in_days = 90
   tags              = var.tags
 }
 
-resource "aws_iam_role" "lambda_role" {
-  name               = "${local.lambda_name_full}-role"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
-  tags               = var.tags
+resource "aws_iam_policy" "lambda_logging_role_policy" {
+  name        = "${var.name_prefix}-${var.application_name}-${var.name}-logging-policy"
+  path        = "/"
+  description = "Policy for creating log groups and logging to cloudwatch for lambda"
+  policy      = data.aws_iam_policy_document.logging_document.json
+  tags        = var.tags
 }
 
-resource "aws_iam_policy" "no_log_group_lambda_policy" {
-  name   = "${local.lambda_name_full}-no-log-group-policy"
-  policy = data.aws_iam_policy_document.lambda_exec_role_policy_sans_log_group.json
-  tags   = var.tags
+resource "aws_iam_policy_attachment" "lambda_logging_role_policy_attachment" {
+  name       = "${var.name_prefix}-${var.application_name}-${var.name}-logging-policy-attachment"
+  policy_arn = aws_iam_policy.lambda_logging_role_policy.arn
+  roles      = [aws_iam_role.lambda_iam.name]
 }
 
 resource "aws_iam_role_policy_attachment" "no_log_group_lambda_policy_attachment" {
