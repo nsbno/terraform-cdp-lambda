@@ -76,3 +76,8 @@ variable "tags" {
   description = "Tags applied to all resources in the deployment"
   default     = {}
 }
+variable "application_name" {
+  description = "The name of the application. Used together with name_prefix to name application-specific resources"
+  type        = string
+}
+
