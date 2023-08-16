@@ -76,7 +76,7 @@ variable "tags" {
   default     = {}
 }
 variable "application_name" {
-  description = "The name of the application. Used together with name_prefix to name application-specific resources"
+  description = "The name of the application. Used to name application-specific resources, making them easily recognizable"
   type        = string
 }
 
