@@ -45,7 +45,6 @@ resource "aws_iam_policy" "no_log_group_lambda_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "no_log_group_lambda_policy_attachment" {
-  name       = "${local.lambda_name_full}-logging-policy-attachment"
   policy_arn = aws_iam_policy.no_log_group_lambda_policy.arn
   role      = aws_iam_role.lambda_role.name
 }
