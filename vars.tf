@@ -3,7 +3,6 @@ variable "env" {
   description = "Environment (Typically one of 'test', 'stage' or 'prod')"
 }
 variable "lambda_code_dir" {}
-variable "name_prefix" {}
 variable "lambda_name" {}
 variable "lambda_source_dir_name" {
   type        = string
