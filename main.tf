@@ -39,7 +39,7 @@ resource "aws_cloudwatch_log_group" "log_group" {
 resource "aws_iam_policy" "no_log_group_lambda_policy" {
   name        = "${local.lambda_name_full}-no-log-group-policy"
   path        = "/"
-  description = "Policy for creating log groups and logging to cloudwatch for lambda"
+  // description = "Policy for creating log groups and logging to cloudwatch for lambda"
   policy      = data.aws_iam_policy_document.lambda_exec_role_policy_sans_log_group.json
   tags        = var.tags
 }
