@@ -62,7 +62,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name               = "${var.name_prefix}-${var.application_name}-${var.lambda_name}-iam"
+  name               = "${var.application_name}-${var.lambda_name}-iam"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
   tags               = var.tags
 }
