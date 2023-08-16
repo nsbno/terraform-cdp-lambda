@@ -36,7 +36,7 @@ resource "aws_cloudwatch_log_group" "log_group" {
   tags              = var.tags
 }
 
-resource "aws_iam_policy" "lambda_logging_role_policy" {
+resource "aws_iam_policy" "no_log_group_lambda_policy" {
   name        = "${local.lambda_name_full}-no-log-group-policy"
   path        = "/"
   description = "Policy for creating log groups and logging to cloudwatch for lambda"
@@ -44,9 +44,9 @@ resource "aws_iam_policy" "lambda_logging_role_policy" {
   tags        = var.tags
 }
 
-resource "aws_iam_policy_attachment" "lambda_logging_role_policy_attachment" {
+resource "aws_iam_policy_attachment" "no_log_group_lambda_policy_attachment" {
   name       = "${local.lambda_name_full}-logging-policy-attachment"
-  policy_arn = aws_iam_policy.lambda_logging_role_policy.arn
+  policy_arn = aws_iam_policy.no_log_group_lambda_policy.arn
   roles      = [aws_iam_role.lambda_role.name]
 }
 
