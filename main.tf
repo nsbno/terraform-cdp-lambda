@@ -1,9 +1,9 @@
 locals {
   lambda_dir       = "${var.lambda_code_dir}/${var.lambda_source_dir_name}"
-  lambda_name_full = "${var.name_prefix}-${var.lambda_name}"
+  lambda_name_full = "${var.application_name}-${var.lambda_name}"
 }
 
-data "aws_iam_policy_document" "lambda_assume_role_policy" {
+data "aws_iam_policy_document" "assume_role" {
   statement {
     actions = [
       "sts:AssumeRole"
@@ -31,19 +31,21 @@ data "aws_iam_policy_document" "lambda_exec_role_policy_sans_log_group" {
 }
 
 resource "aws_cloudwatch_log_group" "log_group" {
-  name              = "/aws/lambda/${aws_lambda_function.lambda.function_name}"
-  retention_in_days = 365
+  name              = "/aws/lambda/${local.lambda_name_full}"
+  retention_in_days = 90
   tags              = var.tags
 }
 
 resource "aws_iam_role" "lambda_role" {
   name               = "${local.lambda_name_full}-role"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
   tags               = var.tags
 }
 
 resource "aws_iam_policy" "no_log_group_lambda_policy" {
-  name   = "${local.lambda_name_full}-no-log-group-policy"
+  name = "${local.lambda_name_full}-no-log-group-policy"
+  path = "/"
+  // description = "Policy for creating log groups and logging to cloudwatch for lambda"
   policy = data.aws_iam_policy_document.lambda_exec_role_policy_sans_log_group.json
   tags   = var.tags
 }

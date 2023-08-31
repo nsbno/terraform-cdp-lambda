@@ -3,7 +3,6 @@ variable "env" {
   description = "Environment (Typically one of 'test', 'stage' or 'prod')"
 }
 variable "lambda_code_dir" {}
-variable "name_prefix" {}
 variable "lambda_name" {}
 variable "lambda_source_dir_name" {
   type        = string
@@ -76,3 +75,8 @@ variable "tags" {
   description = "Tags applied to all resources in the deployment"
   default     = {}
 }
+variable "application_name" {
+  description = "The name of the application. Used to name application-specific resources, making them easily recognizable"
+  type        = string
+}
+
