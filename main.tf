@@ -120,6 +120,15 @@ resource "aws_lambda_permission" "allow_bucket" {
   source_arn    = var.allow_bucket
 }
 
+resource "aws_lambda_permission" "allow_apigw_endpoint" {
+  count         = var.invoke_from_apigw ? 1 : 0
+  statement_id  = "AllowExecutionFromAPIGW${local.lambda_name_full}"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = var.allow_endpoint_arn
+}
+
 resource "aws_cloudwatch_log_subscription_filter" "log_error_filter" {
   for_each        = "stage" == var.env ? {} : var.log_alarm_filters
   destination_arn = each.value

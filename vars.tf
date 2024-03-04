@@ -59,6 +59,14 @@ variable "invoke_from_s3" {
 variable "allow_bucket" {
   default = ""
 }
+variable "invoke_from_apigw" {
+  type        = bool
+  default     = false
+  description = "Whether the lambda will be invoked from aws apigw. Use with allow_endpoint."
+}
+variable "allow_endpoint_arn" {
+  default = ""
+}
 variable "python_version" {
   type    = string
   default = "python3.8"
