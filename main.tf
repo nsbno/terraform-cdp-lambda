@@ -48,12 +48,14 @@ resource "aws_iam_role_policy_attachment" "no_log_group_lambda_policy_attachment
 }
 
 resource "aws_iam_policy" "lambda_policy" {
+  count = var.resource_policy_json != "" ? 1 : 0
   name   = "${var.lambda_name}-policy"
   policy = var.resource_policy_json
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
-  policy_arn = aws_iam_policy.lambda_policy.arn
+  count = var.resource_policy_json != "" ? 1 : 0
+  policy_arn = aws_iam_policy.lambda_policy[0].arn
   role       = aws_iam_role.lambda_role.name
 }
 

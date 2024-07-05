@@ -28,7 +28,10 @@ variable "upsert_query" {
 variable "runtime" {
   default = "python3.8"
 }
-variable "resource_policy_json" {}
+variable "resource_policy_json" {
+  type    = string
+  default = ""
+}
 variable "security_group_ids" {
   type    = list(any)
   default = []
